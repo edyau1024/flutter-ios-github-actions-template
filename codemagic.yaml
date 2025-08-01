@@ -1,11 +1,17 @@
 workflows:
   ios-build:
     name: iOS Build
-    working_directory: .  
+    working_directory: .
     environment:
       flutter: stable
       xcode: latest
     scripts:
+      - name: Debug directory
+        script: |
+          echo "Current directory:"
+          pwd
+          echo "Files:"
+          ls -la
       - name: Get dependencies
         script: flutter pub get
       - name: Build iOS
