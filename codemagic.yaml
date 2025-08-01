@@ -1,6 +1,7 @@
 workflows:
   ios-build:
     name: iOS Build
+    working_directory: .  
     environment:
       flutter: stable
       xcode: latest
