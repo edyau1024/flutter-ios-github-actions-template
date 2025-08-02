@@ -1,14 +1,15 @@
 workflows:
-  android-unsigned:
-    name: Android Unsigned Build
-    instance_type: mac_mini_m2
+  android-build:
+    name: Android Build
     max_build_duration: 60
     environment:
+      vars:
+        JAVA_TOOL_OPTIONS: "-Xmx4g"
       flutter: stable
     scripts:
-      - name: Get Flutter packages
-        script: flutter pub get
       - name: Build APK
-        script: flutter build apk --debug
+        script: |
+          flutter pub get
+          flutter build apk --debug
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk
