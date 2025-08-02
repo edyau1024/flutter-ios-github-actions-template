@@ -1,7 +1,7 @@
 workflows:
   ios-unsigned:
     name: iOS Unsigned Build
-    instance_type: mac_m1
+    instance_type: mac_mini_m1
     environment:
       flutter: stable
       xcode: latest
