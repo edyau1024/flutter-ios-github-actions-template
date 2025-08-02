@@ -2,20 +2,14 @@ workflows:
   ios-unsigned:
     name: iOS Unsigned Build
     instance_type: mac_m1
-    max_build_duration: 60
     environment:
       flutter: stable
       xcode: latest
     scripts:
-      - name: Install Flutter dependencies
+      - name: Get Flutter Dependencies
         script: flutter pub get
-      - name: Build iOS (no code signing)
+      - name: Build iOS (Unsigned)
         script: flutter build ios --no-codesign
     artifacts:
-      - build/ios/iphoneos/Runner.app
+      - build/ios/iphoneos/*.app
       - build/ios/iphoneos/*.ipa
-      - build/ios/archive/*.xcarchive
-    publishing:
-      email:
-        recipients:
-          - edyau1024@hotmail.com
