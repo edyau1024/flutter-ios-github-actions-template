@@ -1,22 +1,26 @@
 workflows:
   ios-build:
     name: iOS Build
-    working_directory: .
     environment:
       flutter: stable
       xcode: latest
+      os: macos
     scripts:
-      - name: Debug directory
-        script: |
-          echo "Current directory:"
-          pwd
-          echo "Files:"
-          ls -la
       - name: Get dependencies
         script: flutter pub get
-      - name: Build iOS
+      - name: Build iOS app (no code signing)
         script: flutter build ios --release --no-codesign
+      - name: Archive with xcodebuild
+        script: |
+          xcodebuild -workspace ios/Runner.xcworkspace \
+          -scheme Runner \
+          -configuration Release \
+          -archivePath $PWD/build/Runner.xcarchive archive
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+          -archivePath $PWD/build/Runner.xcarchive \
+          -exportPath $PWD/build/ios/ipa \
+          -exportOptionsPlist ios/exportOptions.plist
     artifacts:
-      - build/ios/iphoneos/*.ipa
-
-
+      - build/ios/ipa/*.ipa
