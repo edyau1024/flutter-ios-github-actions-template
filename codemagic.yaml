@@ -4,23 +4,38 @@ workflows:
     environment:
       flutter: stable
       xcode: latest
-      os: macos
     scripts:
+      - name: Debug directory
+        script: |
+          echo "Current directory:"
+          pwd
+          echo "Files:"
+          ls -la
       - name: Get dependencies
         script: flutter pub get
-      - name: Build iOS app (no code signing)
-        script: flutter build ios --release --no-codesign
-      - name: Archive with xcodebuild
+      - name: Create exportOptions.plist
         script: |
-          xcodebuild -workspace ios/Runner.xcworkspace \
-          -scheme Runner \
-          -configuration Release \
-          -archivePath $PWD/build/Runner.xcarchive archive
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-          -archivePath $PWD/build/Runner.xcarchive \
-          -exportPath $PWD/build/ios/ipa \
-          -exportOptionsPlist ios/exportOptions.plist
+          cat > ios/exportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>ad-hoc</string>
+              <key>signingStyle</key>
+              <string>manual</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>compileBitcode</key>
+              <false/>
+              <key>destination</key>
+              <string>export</string>
+              <key>manageAppVersionAndBuildNumber</key>
+              <false/>
+          </dict>
+          </plist>
+          EOF
+      - name: Build iOS IPA
+        script: flutter build ipa --export-options-plist=ios/exportOptions.plist
     artifacts:
       - build/ios/ipa/*.ipa
